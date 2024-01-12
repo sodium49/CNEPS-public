@@ -1,0 +1,12 @@
+## Test Data and Test Results
+cneps-meta
+cneps-res
+cneps-meta
+__pycache__
+clones
+res
+Dockerfile
+
+## Centris DB
+metaInfos
+componentDB
