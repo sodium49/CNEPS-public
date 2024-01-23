@@ -102,6 +102,8 @@ c-ares@@c-ares_sig      @       clones/mongo/src/third_party/cares/dist
 ## Note
 1. Because `CNEPS` saves Centris results, parsed headers, and definitions at `cneps-meta` directory, please delete `cneps-meta` directory to accurately evaluate the performance
 2. Because `CNEPS` utilizes `Centris` to identify reused functions, it takes longer time than the result we have shown in the evaluation section, which only presents time taken by `CNEPS`
+3. Because `CNEPS` utilizes `Centris` to detect the components, any techniques applied to component detection can enhance the results of `CNEPS`
+
 
 ## How to reproduce results
 
