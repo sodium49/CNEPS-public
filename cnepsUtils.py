@@ -16,10 +16,8 @@ def whoIsRoot(p1, p2):
     
     
     if tmpP2.is_relative_to(tmpP1) :
-        # print("{} is child path of {}".format(tmpP1, tmpP2))
         return p1
     elif tmpP1.is_relative_to(tmpP2):
-        # print("{} is child path of {}".format(tmpP2, tmpP1))
         return p2
     else:
         return False
@@ -27,11 +25,7 @@ def whoIsRoot(p1, p2):
 def calcDist(filePath, hdrPaths, parsedHdr=None):
     origPath = "/".join(filePath.split("/")[:-1])
     ret = []
-    # if(filePath == "clones/mongo/src/third_party/unwind/dist/src/ppc64/Ginit.c"):
-    #     debug = True
-    # else:
-    #     debug = False
-        
+
     curDist = 999999
     for eachHdr in hdrPaths:
         ### Least condition: header path should be included e.g., build/a.h -> build/ should be included
@@ -51,23 +45,12 @@ def calcDist(filePath, hdrPaths, parsedHdr=None):
         common = 0
         for i in range(1,totLen+2):
             if(p1[0:i] == p2[0:i]):
-                # if (debug): 
-                #     print(p1[0:i])
-                #     print(p2[0:i])
                 continue
             else:
                 break
         common = i-1
         commonPath = p1[0:common]
         dist = len(p1) - common + len(p2) - common
-        # if (debug): 
-        #     print(eachHdr)
-        #     print(len(p1), len(p2))
-        #     print(len(p1) - common, len(p2) - common)
-        #     print(common)
-        #     print(commonPath)
-        #     print(i, totLen+1)
-        #     print(dist)
 
         if dist < curDist:
             ret = [eachHdr]
@@ -93,8 +76,6 @@ def calcDist2(hdrPath, filePaths, parsedHdr=None):
         common = 0
         for i in range(1,totLen+1):
             if(p1[0:i] == p2[0:i]):
-                # print(p1[0:i])
-                # print(p2[0:i])
                 continue
             else:
                 break
@@ -130,14 +111,5 @@ def makeHdrLookup(allNodes):
                     path2node[eachHdrFile] = []
                 path2node[eachHdrFile].append(eachNode)
 
-    # nodes = []
-    # for eachHdr in path2node:
-    #     if(len(path2node[eachHdr])>1):
-    #         print(eachHdr)
-    #         print(path2node[eachHdr])
-    #         for eachNode in path2node[eachHdr]:
-    #             print(eachNode.OSS)
-    #             print(eachNode)
-    #         print()
         
     return hdr2path, path2node

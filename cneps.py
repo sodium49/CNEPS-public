@@ -114,10 +114,6 @@ def linkedReuseAnalysis(repoName, allNodes, hdr2path, meta, edges):
 
                     targetHdrPaths = calcDist(eachFile, hdrPaths, parsedHdr=parsedHdr)
                     if len(targetHdrPaths) > 1:
-                        # print("ERR T_T")
-                        # print(targetHdrPaths)
-                        # print(eachFile)
-                        # print(hdrPaths)
                         if eachNode not in FNmonitor:
                             FNmonitor[eachNode] = []
                         toAdd = eachFile + " => "
@@ -131,8 +127,7 @@ def linkedReuseAnalysis(repoName, allNodes, hdr2path, meta, edges):
                     ### When only one candidates left, we can determine with first index
                     targetHdrPath = targetHdrPaths[0]
                     if not targetHdrPaths:
-                        # print("ERR")
-                        # exit()
+
                         if eachNode not in FNmonitor:
                             FNmonitor[eachNode] = []
                         toAdd = eachFile + " -> " + parsedHdr
@@ -144,13 +139,11 @@ def linkedReuseAnalysis(repoName, allNodes, hdr2path, meta, edges):
                         targetHdrPath = eachTargetHdrPath
 
                         if targetHdrPath in path2node:
-                            # print(targetHdrPath)
 
                             targetNodeList = path2node[targetHdrPath]
 
                             for targetNode in targetNodeList:
 
-                            # print(path2m[target].OSS)
                                 if targetNode == eachNode:
                                     continue
                                 
@@ -203,21 +196,21 @@ def mergeSameDirNodes(allNodes, edges, FNmonitor, meta):
         if eachNode not in oss2nodes[OSS]: 
             oss2nodes[OSS].append(eachNode)
     print("Nodes before merging same dir nodes: ",len(allNodes))
+
     ### Merge nodes in same root and same OSS
     for eachOSS in oss2nodes:
         
-        # print(eachOSS)
         roots = []
         root2node = {}
         nodes = oss2nodes[eachOSS]
-        # print(nodes)
+
         ### Collect all nodes
         for targetNode in nodes:
             targetRoot = targetNode.root
             
             ### Empty roots, for first iteration
             if not roots:
-                # print("New Root!: ", targetRoot)
+                
                 roots.append(targetRoot)
                 root2node[targetRoot] = targetNode
                 continue
@@ -240,7 +233,6 @@ def mergeSameDirNodes(allNodes, edges, FNmonitor, meta):
                         roots = list(set(roots))
                         del root2node[eachRoot]
                         root2node[targetRoot] = targetNode
-                    # print("Merge into...: ", parentNode, targetNode)
                     
                     mergeNode(parentNode, childNode, allNodes)
                     ### FN monitor update
@@ -263,19 +255,13 @@ def mergeSameDirNodes(allNodes, edges, FNmonitor, meta):
         print()
     allNodes = clearNodeList(allNodes) ### Cleanse allnodes
 
-    # print(sum)
     print("Nodes after merging same dir nodes: ",len(allNodes))
 
-    # print(allNodes)
     rootNodes = []
     for eachNode in allNodes:
-        # print(eachNode)
         if eachNode.parent:
-            # print(eachNode)
-            # print(eachNode.parent)
             continue
         rootNodes.append(eachNode)
-    # print("--- %s seconds ---" % (time.time() - stime))
     return rootNodes, allNodes, edges, FNmonitor
     
 def originCandidGen(allNodes):
@@ -288,22 +274,15 @@ def originCandidGen(allNodes):
             # eachParent.root
             parentRoot = Path(eachParent.root)
             myRoot = Path(eachNode.root)
-            # print(parentRoot)
-            # print(myRoot)
-            # print()
+            
             if myRoot.is_relative_to(parentRoot) :
-                # if ( myRoot != parentRoot):
-                    # print(myRoot, parentRoot)
-                # exit()
                 eachNode.src.append(eachParent)
         if len(eachNode.src) > 1:
-            # print(555)
-            # print(eachNode.src)
             eachNode.src = list(set(eachNode.src))
-            # print(eachNode.src)
+
             if None in eachNode.src:
                 eachNode.src.pop(eachNode.src.index(None))
-            # print(eachNode.src)
+
     return allNodes
 
 
@@ -332,7 +311,7 @@ def checkLinkExists(eachNode, checkNode, allNodes, hdr2path, meta):
 
         for parsedHdr in parsedHdrList:
             parsedHdrName = parsedHdr.split("/")[-1]
-            # print(parsedHdr)
+
             if not parsedHdr.endswith(both):
                 continue
             if parsedHdrName in hdr2path:  ### In case not in nodes list, we can't handle it
@@ -424,13 +403,8 @@ def mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta):
         # for targetNode in allNodes:
         j = 0
         EOL_in = len(allNodes)
-        # while EOL_in:
-            # if j == EOL_in:
-                # EOL_in = False
-                # continue
+        
         for targetNode in allNodes:
-            # targetNode = allNodes[j]
-            # j += 1
             ### Since we are using the same list, targetnode can be same, at that case, skip it
             if eachNode == targetNode or \
                 targetNode == None or \
@@ -463,10 +437,7 @@ def mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta):
             f1 = [x.split("/")[-1] for x in eachNode.files]
             f2 = [x.split("/")[-1] for x in targetNode.files]
             commonFile = list(set(f1).intersection(f2))
-            # if common : ### Duplicate found -> skip
-            #     print("common files...")
-            #     continue
-            
+
             ### Compare roots
             r1 = eachNode.root
             r2 = targetNode.root
@@ -489,17 +460,12 @@ def mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta):
                 eachNode.deps.append(depsStr)
                 eachNode.deps = list(set(eachNode.deps))
                 targetNode.parent.append(eachNode)
-                # targetNode.deps.append(depsStr)
-                # targetNode.deps = list(set(eachNode.deps))
+                
                 ### Update edges information
                 newEdge = "{} -> {}".format(eachNode, targetNode)
                 # print(newEdge)
                 # edgeStr = "{} -> {}".format(self, newSubNode)
                 
-                # if newEdge in edges:
-                    # print(99979)
-                    # print(newEdge)
-                    # print(edges[newEdge])
                 if newEdge not in edges:
                     # print(555657)
                     edges[newEdge] = "link"
@@ -515,9 +481,6 @@ def mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta):
                 # if parentRoot == r1:
                 parentNode = eachNode
                 childNode = targetNode
-                # else:
-                #     parentNode = targetNode
-                #     childNode = eachNode
             
             if mergeFlag:
                 ### Update by deleting merged node
@@ -555,7 +518,7 @@ def mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta):
                         print(edges)
                         print(eachEdge)
                         
-                        print("???")
+                        print("ERR")
                         exit()
                 
                 ### If the node is merged, skip this one
@@ -675,11 +638,6 @@ def main():
     allNodes, edges = genNodes(moduleList)
     moduleTime = time.time() - moduleTime
     print(" Module gen --- %s seconds ---" % (moduleTime) )
-    # printNode(allNodes, [])
-    # print("No dup? {}".format( len(allNodes) == len(set(allNodes))))
-    # printAllNode(allNodes)
-    # printNode(allNodes, [])
-    
     
     
     print("! 4 Analyzing dependency...")
@@ -690,23 +648,14 @@ def main():
     rootNodes, allNodes, edges, FNmonitor = mergeSameDirNodes(allNodes, edges, FNmonitor, meta)
     sameDirMergeTime = time.time() - sameDirMergeTime
     print("--- Merging Time %s seconds ---" % (sameDirMergeTime) )
-    # rootNodes, allNodes, edges, FNmonitor = rootAnalysis(allNodes, edges, FNmonitor)    ### This is for reducing 
-    # printNode(allNodes, [])
-    # exit()
-
-    # print("--- Merging Time %s seconds ---" % (depsAnalysisTime) )
-    
     
     linkAnalysisTime = time.time()
     allNodes, edges, FNmonitor = linkedReuseAnalysis(repoName, allNodes, hdr2path, meta, edges)
     linkAnalysisTime = time.time() - linkAnalysisTime
-    # printNode(allNodes, [])
-    # print(len(allNodes))
+    
     allNodes = originCandidGen(allNodes)
     print("--- Link analysis %s seconds ---" % (linkAnalysisTime) )
-    # printNode(allNodes, [])
-    # printNode(allNodes, [])
-    # print(len(allNodes))
+
     depsAnalysisTime = time.time()
     allNodes, edges, FNmonitor = mergeSameSrcNodes(allNodes, edges, FNmonitor, hdr2path, meta)
     depsAnalysisTime = time.time() - depsAnalysisTime
@@ -749,13 +698,6 @@ def main():
             print('\t' + eachRoot)
         print()
     
-    # depsAnalysisTime = time.time() - depsAnalysisTime
-    # print("--- Deps analysis %s seconds ---" % (depsAnalysisTime) )
-    # print(rootNodes)
-    # print("Detected root nodes: {}".format(len(rootNodes)))
-    # print("No dup? {}".format( len(rootNodes) == len(set(rootNodes))))
-    # print("Num nodes after root analysis:{}".format(len(allNodes)))
-    # print("No dup? {}".format( len(allNodes) == len(set(allNodes))))
 
     # printNode(allNodes, [])
     ### Save

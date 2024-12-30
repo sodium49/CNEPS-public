@@ -6,13 +6,6 @@ import cnepsPath
 
 ###
 from cnepsUtils import *
-
-# ctagsPath = "./bin/ctags"
-# resPath = "./res_dejavue"
-# metaPath = "./meta_dejavue"
-# trashPath = "./trash"
-# codeList = (".c", ".cc", ".cpp")
-# hdrList = (".h", ".hxx", ".hpp")
 ctagsPath = cnepsPath.ctagsPath
 resPath = cnepsPath.resPath
 metaPath = cnepsPath.metaPath
@@ -35,8 +28,6 @@ class module():
         print("Parent Number: {}".format(len(self.parent)))
         print("Subs Number: {}".format(len(self.sub)))
         ### Sub into one Cat if the OSS exists, else make new one
-    # def append(self, hdr):
-    #     pass
 
 def printAllModules(modules):
     for eachM in modules:
@@ -100,8 +91,6 @@ def parseOSSinfo(targetPath, repoName):
                     path2OSS[pathWithFunc] += [curOSS]       
     
     ### END of parsing CENTRIS
-    # print("Total OSSes: {}".format(totOSS))
-    # print("Original OSS lists: ", origOSSes)
     print("--- %s seconds ---" % (time.time() - stime))
     return path2OSS, centrisResult          
 ###################################################
@@ -117,14 +106,6 @@ def findHdr(hdrPaths, targetPath, targetFunc, path2proto):
         else:
             if targetFunc in path2proto[eachHdrPath]:
                 hdrCand.append(eachHdrPath)
-    
-    # if len(hdrCand) > 1:
-    #     print("Multiple Hdr Candids!!")
-    #     print(hdrCand)
-    #     hdrCand = [calcDist(targetPath, hdrCand, parsedHdr=None)]
-    #     # exit()
-    # else:
-    #     retHdr = hdrCand
     retHdr = hdrCand
     return retHdr
 
@@ -153,88 +134,14 @@ def parseInclude(targetFile, targetFunc, hdr2path, path2proto, path2link):
                 if not hdrPaths:    ### System
                     continue
                 ### Find hdrs that contains myself as prototypes
-                # hdrCand = []
-                # for eachHdrPath in hdrPaths:
-                #     if eachFunc in path2proto:
-                #         hdrCand.append(eachHdrPath)
                 targetHdrPath = findHdr(hdrPaths, targetFile, targetFunc, path2proto)
 
                 # targetHdrPath = calcDist(eachFile, hdrPaths, parsedHdr=parsedHdr)
-
-                # if not targetHdrPath:
-                #     print("ERR")
-                #     exit()
-                    # continue #### It shouldn't be like this though...
                 if targetHdrPath: 
                     retCenter += targetHdrPath
     except: retCenter = []
     return retCenter
 
-"""
-def parseImports(targetFile, myFuncs, hdr2path, path2proto):
-    fp = open(targetFile, "r", encoding="utf-8", errors="ignore")
-    fstring = fp.readlines()
-    retHdr = {}
-
-    for eachline in fstring:
-        ### Parse headers called module (or included in header file)
-        if ( ("#include" in eachline) and (eachline.replace(" ", "")[0:len("#include")] == "#include") ):
-            try:
-                parsedHdr = eachline.split("#include")[1].replace(" ", "")
-            except:
-                print("ERR!!")
-                print(targetFile)
-                print(parsedHdr)
-                exit()
-            quote = parsedHdr[0]
-            quoteEnd = "\"" if quote=="\"" else ">"
-            parsedHdr = parsedHdr[1:]
-            parsedHdr = parsedHdr.split(quoteEnd)[0]
-            parsedHdrName = parsedHdr.split("/")[-1]
-
-            # print(parsedHdr)
-            if not parsedHdr.endswith(both):    ### High probability of external library call
-                continue
-
-            
-            if parsedHdrName in hdr2path:  ### In case not in nodes list, we can't handle it
-                hdrPaths = hdr2path[parsedHdrName]
-                tmpPaths = []
-                
-
-                for eachHdrPaths in hdrPaths:
-                    if parsedHdr in eachHdrPaths:
-                        tmpPaths.append(eachHdrPaths)
-                hdrPaths = tmpPaths
-
-                if not hdrPaths:    ### System
-                    continue
-                ### Find hdrs that contains myself as prototypes
-                # hdrCand = []
-                # for eachHdrPath in hdrPaths:
-                #     if eachFunc in path2proto:
-                #         hdrCand.append(eachHdrPath)
-                for eachFunc in myFuncs:
-                    targetHdrPath = findHdr(hdrPaths, targetFile, eachFunc, path2proto)
-                    for eachHdrPath in targetHdrPath:
-                        pathNFunc = targetFile + "\t" + eachFunc
-                        if eachHdrPath not in retHdr:
-                            retHdr[eachHdrPath] = []
-                        if pathNFunc not in retHdr[eachHdrPath]:
-                            retHdr[eachHdrPath].append(pathNFunc)
-                    
-                    # if targetHdrPath: 
-                    #     retHdr += targetHdrPath
-
-                # targetHdrPath = calcDist(eachFile, hdrPaths, parsedHdr=parsedHdr)
-
-                # if not targetHdrPath:
-                #     print("ERR")
-                #     exit()
-                    # continue #### It shouldn't be like this though...
-
-    return retHdr
-"""
 def parseDirs(targetFile, targetPath, targetFunc, hdr2path, path2proto):
     retCenter = []
     
@@ -392,14 +299,6 @@ def moduleGen(targetPath, repoName, path2OSS):
                                     if eachPathNFuncs not in hdrLinkedFiles[eachHdr]:
                                         hdrLinkedFiles[eachHdr].append(eachPathNFuncs)
 
-                    # importedHdrs = parseImports(filePath, myfuncs, hdr2path, path2proto)
-                    # for eachHdr in importedHdrs:
-                    #     if eachHdr not in hdrLinkedFiles:
-                    #         hdrLinkedFiles[eachHdr] = []
-                    #     pathNFuncs = importedHdrs[eachHdr]
-                    #     for eachPathNFuncs in pathNFuncs:
-                    #         if eachPathNFuncs not in hdrLinkedFiles[eachHdr]:
-                    #             hdrLinkedFiles[eachHdr].append(eachPathNFuncs)
     
     # print("! 2-2 Finding module centers")
     ### Generate simple module using header information
@@ -422,18 +321,11 @@ def moduleGen(targetPath, repoName, path2OSS):
         centerCand = []
         centerCand += parseInclude(eachFile, eachFunc, hdr2path, path2proto, path2link)
         # print("INCLUDE PARSE RULE")
-        # print(eachFile)
-        # print(eachFunc)
-        # print(centerCand)
-        # print()
         
         ### Rule 2 files in same dir. Parse files in the same DIRS to find original function
         centerCand += parseDirs(eachFile, eachPath, eachFunc, hdr2path, path2proto)
         centerCand = list(set(centerCand)) ### Delete dup
         # print("DIR PARSE RULE")
-        # print(eachFile)
-        # print(eachFunc)
-        # print(centerCand)
         
         ### Rule 3 Nothing found as center candid, myself becomes module
         if not centerCand:
@@ -457,22 +349,9 @@ def moduleGen(targetPath, repoName, path2OSS):
         # centerCand = calcDist(targetPath, centerCand, parsedHdr=None)
         
         if len(centerCand) > 1:
-            # print("NEED DEBUGG")
-            # print(eachFile)
-            # print(eachFunc)
-            # print(centerCand)
             centerCand = calcDist(eachFile, centerCand)
             
-            # print(centerCand)
-
-        
         ### Link center with file + Func -> In canse multiple found
-        # for eachCenter in centerCand:
-        #     fileNfunc = eachFile + "\t" + eachFunc
-        #     if eachCenter not in clsLinkedFuncs:
-        #         clsLinkedFuncs[eachCenter] = []
-        #     if fileNfunc not in clsLinkedFuncs[eachCenter]:
-        #         clsLinkedFuncs[eachCenter].append(fileNfunc)
         for eachCenter in centerCand:
             fileNfunc = eachFile + "\t" + eachFunc
             if eachCenter not in clsLinkedFuncs:
@@ -481,55 +360,57 @@ def moduleGen(targetPath, repoName, path2OSS):
                 clsLinkedFuncs[eachCenter].append(fileNfunc)
                 
                 
-    # ### Check elements of segments
-    # for eachHdr in hdrLinkedFiles:
-    #     if not eachHdr in clsLinkedFuncs:
-    #         continue ### SKIP segment that won't be used
-    #     elemList = hdrLinkedFiles[eachHdr]
-    #     file2paths = {}
-    #     checkList = []
-    #     newElemList = elemList
+    ### Check elements of segments
+    """
+    for eachHdr in hdrLinkedFiles:
+        if not eachHdr in clsLinkedFuncs:
+            continue ### SKIP segment that won't be used
+        elemList = hdrLinkedFiles[eachHdr]
+        file2paths = {}
+        checkList = []
+        newElemList = elemList
 
-    #     ### Make Checklists
-    #     for eachElem in elemList:
-    #         fileName, funcName = eachElem.split("\t")
-    #         fileNameOnly = fileName.split("/")[-1]
-    #         if fileNameOnly not in file2paths:
-    #             file2paths[fileNameOnly] = []
-    #         if(fileName not in file2paths[fileNameOnly]):
-    #             file2paths[fileNameOnly].append(fileName)
-    #     print(hdrLinkedFiles[eachHdr])
+        ### Make Checklists
+        for eachElem in elemList:
+            fileName, funcName = eachElem.split("\t")
+            fileNameOnly = fileName.split("/")[-1]
+            if fileNameOnly not in file2paths:
+                file2paths[fileNameOnly] = []
+            if(fileName not in file2paths[fileNameOnly]):
+                file2paths[fileNameOnly].append(fileName)
+        print(hdrLinkedFiles[eachHdr])
 
 
-    #     for eachFile in file2paths:
-    #         if len(file2paths[eachFile]) ==1:
-    #             continue
-    #         ### DUPLICATED ELEMENT EXISTS!!!
+        for eachFile in file2paths:
+            if len(file2paths[eachFile]) ==1:
+                continue
+            ### DUPLICATED ELEMENT EXISTS!!!
             
-    #         competeFiles = file2paths[eachFile]
-    #         ret = calcDist2(eachHdr, competeFiles)
-    #         print(competeFiles)
-    #         print(ret)
-    #         if(len(ret) == 1):
-    #             ret = ret[0]
-    #             competeFiles = competeFiles.pop(competeFiles.index(ret))
-    #         else:
-    #             print("XX")
-    #             print(ret)
-    #             continue ### Can not determine for this case
-    #         # print(eachHdr)
-    #         # print(competefiles)
-    #         # print(ret)
-    #         # print(competefiles.pop(competefiles.index(ret)))
-    #         for eachElem in elemList:
-    #             fileName, funcName = eachElem.split("\t")
-    #             if (fileName in competeFiles):
-    #                 newElemList.pop(newElemList.index(eachElem))
-    #         # print(competefiles - ret)
-    #     hdrLinkedFiles[eachHdr] = newElemList
-    #     print(hdrLinkedFiles[eachHdr])
+            competeFiles = file2paths[eachFile]
+            ret = calcDist2(eachHdr, competeFiles)
+            print(competeFiles)
+            print(ret)
+            if(len(ret) == 1):
+                ret = ret[0]
+                competeFiles = competeFiles.pop(competeFiles.index(ret))
+            else:
+                print("XX")
+                print(ret)
+                continue ### Can not determine for this case
+            # print(eachHdr)
+            # print(competefiles)
+            # print(ret)
+            # print(competefiles.pop(competefiles.index(ret)))
+            for eachElem in elemList:
+                fileName, funcName = eachElem.split("\t")
+                if (fileName in competeFiles):
+                    newElemList.pop(newElemList.index(eachElem))
+            # print(competefiles - ret)
+        hdrLinkedFiles[eachHdr] = newElemList
+        print(hdrLinkedFiles[eachHdr])
         
         # exit()
+    """
 
 
     print("! 2-2 Module generation")
@@ -704,18 +585,6 @@ def moduleGen(targetPath, repoName, path2OSS):
 
     
     print("--- %s seconds ---" % (time.time() - stime))
-
-    ### Write in json format
-    # with open(resPath + "/" + repoName + "_hdrOSS.json", "w", encoding='utf-8', errors='ignore') as fp:
-    #     json.dump(module, fp)
-
-    # with open(resPath + "/" + repoName + "_hdrOSS.txt", "w", encoding='utf-8', errors='ignore') as fp:
-    #     ### Generate Human Readable reseult
-    #     for eachClust in module:
-
-    #         fp.write(eachOSS + "\n")
-    #         for eachHdr in OSShdr[eachOSS]:
-    #             fp.write("\t" + eachHdr + "\n")
     
     
     ## Update hdr2path to include ALL FILES
